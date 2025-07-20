@@ -9,6 +9,7 @@ from sklearn import model_selection
 from sklearn import neighbors
 from sklearn import pipeline
 from sklearn import preprocessing
+from src.evaluate import evaluate_model
 
 SALES_PATH = "data/kc_house_data.csv"  # path to CSV with home sale data
 DEMOGRAPHICS_PATH = "data/kc_house_data.csv"  # path to CSV with demographics
@@ -61,6 +62,8 @@ def main():
     model = pipeline.make_pipeline(preprocessing.RobustScaler(),
                                    neighbors.KNeighborsRegressor()).fit(
                                        x_train, y_train)
+
+    print(evaluate_model(model, _x_test, _y_test))
 
     output_dir = pathlib.Path(OUTPUT_DIR)
     output_dir.mkdir(exist_ok=True)
