@@ -8,6 +8,7 @@ import os
 import pandas as pd
 from dotenv import load_dotenv
 from src.inference import make_prediction
+import json
 
 
 log_file_path = "logs/api_logs.log"
@@ -44,20 +45,32 @@ class LogRequestsMiddleware(BaseHTTPMiddleware):
 app.add_middleware(LogRequestsMiddleware)
 
 
-# Load model at startup
-with open("model/model_pipeline.pkl", "rb") as f:
-    model = pickle.load(f)
+# load champion model
+async def load_model():
+    with open("model/champion_model.pkl", "rb") as f:
+        model = pickle.load(f)
+        return model
 
 
 class PropertyData(BaseModel):
-    type: str
-    sector: str
-    net_usable_area: float
-    net_area: float
-    n_rooms: float
-    n_bathroom: float
-    latitude: float
-    longitude: float
+    bedrooms: int
+    bathrooms: float
+    sqft_living: int
+    sqft_lot: int
+    floors: float
+    waterfront: int
+    view: int
+    condition: int
+    grade: int
+    sqft_above: int
+    sqft_basement: int
+    yr_built: int
+    yr_renovated: int
+    zipcode: int
+    lat: float
+    long: float
+    sqft_living15: int
+    sqft_lot15: int
 
 
 def verify_api_key(api_key: str):
@@ -66,10 +79,33 @@ def verify_api_key(api_key: str):
         raise HTTPException(status_code=403, detail="Invalid API Key")
 
 
+def add_demographics(data: pd.DataFrame) -> pd.DataFrame:
+    """
+    Add demographic data to the input DataFrame based on zipcode.
+    """
+    demographics = pd.read_csv("data/zipcode_demographics.csv")
+    data = data.merge(demographics, on="zipcode", how="left")
+    return data
+
+
+def prepare_input_data(data: PropertyData) -> pd.DataFrame:
+    """
+    Convert PropertyData to DataFrame and add demographics.
+    """
+    model_features = json.load(open("model/champion_model_features.json", "r"))
+    input_data = pd.DataFrame([data.dict()])
+    input_data = add_demographics(input_data)
+    input_data = input_data[model_features]
+
+    return input_data
+
+
 # Predict route
 @app.post("/predict", dependencies=[Depends(verify_api_key)])
 async def predict(data: PropertyData):
-    input_data = pd.DataFrame([data.model_dump()])
+    model = await load_model()
+    input_data = prepare_input_data(data)
+
     prediction = make_prediction(input_data, model)
     return {"prediction": prediction[0]}
 

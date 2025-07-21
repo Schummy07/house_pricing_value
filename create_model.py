@@ -63,15 +63,15 @@ def main():
                                    neighbors.KNeighborsRegressor()).fit(
                                        x_train, y_train)
 
-    print(evaluate_model(model, _x_test, _y_test))
+    print(evaluate_model(model, pandas.concat([_x_test, _y_test], axis=1), setup_needed=False, model_features=x_train.columns))
 
     output_dir = pathlib.Path(OUTPUT_DIR)
     output_dir.mkdir(exist_ok=True)
 
     # Output model artifacts: pickled model and JSON list of features
-    pickle.dump(model, open(output_dir / "model.pkl", 'wb'))
+    pickle.dump(model, open(output_dir / "champion_model.pkl", 'wb'))
     json.dump(list(x_train.columns),
-              open(output_dir / "model_features.json", 'w'))
+              open(output_dir / "champion_model_features.json", 'w'))
 
 
 if __name__ == "__main__":

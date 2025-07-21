@@ -218,6 +218,11 @@ def save_challenger_model(model, metrics, X_train, output_dir: str = "model") ->
         json.dump(metrics, f, indent=2)
     logger.info(f"Metrics saved to {metrics_path}")
 
+    features_path = os.path.join(output_dir, "challenger_model_features.json")
+    with open(features_path, "w") as f:
+        json.dump(list(X_train.columns), open(features_path, 'w'))
+    logger.info(f"Features saved to {features_path}")
+
     feature_importances(model, X_train, output_dir)
 
 
