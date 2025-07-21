@@ -79,6 +79,7 @@ def _load_model_from_disk():
     _model_mtime = os.path.getmtime(model_path)
     logger.info(f"Loaded model construct={MODEL_CONSTRUCT} with {len(model_features)} features")
 
+
 # On startup: initial model load
 @app.on_event("startup")
 async def startup_event():
