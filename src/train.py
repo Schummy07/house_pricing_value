@@ -262,7 +262,7 @@ def launch() -> Tuple[XGBRegressor, Dict[str, Any], Trials]:
     best_params = run_optimization(X_train, y_train)
     model = train_best_model(best_params, X_train, y_train)
 
-    metrics = evaluate_model(model, X_test, y_test)
+    metrics = evaluate_model(model, test_data, model_features=X_train.columns.tolist())
     logger.info(f"Model evaluation metrics: {metrics}")
 
     save_challenger_model(model, metrics, X_train)
