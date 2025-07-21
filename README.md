@@ -51,7 +51,7 @@ This command will create the following files:
 
 ### 3.a. Application Testing
 
-After the initial champion model creation, it's already possible to test the endpoint and run the application.
+After the initial champion model creation, it's already possible to test the endpoint and run the application. (Refer to API Usage)
 
 ### 3.b. API Key Configuration
 
