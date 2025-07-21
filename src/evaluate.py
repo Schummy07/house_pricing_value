@@ -103,7 +103,7 @@ def evaluate_model(
     return metrics
 
 
-def feature_importances(model, X_train, output_dir):
+def feature_importances(model, X_train, output_dir, model_allias: str = "challenger"):
     """
     Returns a Plot of feature importances.
     """
@@ -119,6 +119,6 @@ def feature_importances(model, X_train, output_dir):
     plt.title("Feature Importances")
     plt.tight_layout()
 
-    fi_path = os.path.join(output_dir, "challenger_model_feature_importance.png")
+    fi_path = os.path.join(output_dir, f"{model_allias}_model_feature_importance.png")
     plt.savefig(fi_path)
     plt.close()
