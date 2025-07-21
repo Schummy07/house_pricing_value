@@ -70,7 +70,6 @@ def main():
     output_dir = pathlib.Path(OUTPUT_DIR)
     output_dir.mkdir(exist_ok=True)
 
-    feature_importances(model, x_train, output_dir, model_allias="champion")
     # Output model artifacts: pickled model and JSON list of features
     pickle.dump(model, open(output_dir / "champion_model.pkl", 'wb'))
     json.dump(list(x_train.columns),
